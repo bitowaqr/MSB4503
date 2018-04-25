@@ -1,4 +1,11 @@
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
+# Using Ridge Regression                          #
+# to draw the Training and Test Error curves      # 
+# as a function of the amount of regularization   #
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+
 # load packages
 library(caret)
 library(MASS)
