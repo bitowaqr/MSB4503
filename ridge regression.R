@@ -12,6 +12,8 @@
   library (glmnet)
   library(doParallel)
   library(cowplot)
+  library(glmnet)
+  
 
 
 # parallel
@@ -114,6 +116,37 @@
 #                     geom_line(aes(x=cv.lambda,y=cv.error,col="CV error")) +
 #                     geom_line(data = RMSE.plot, aes(x=lambda,y=RMSE.train,col="Training error")) +
 #                     geom_line(data = RMSE.plot, aes(x=lambda,y=RMSE.test,col="Test error")) +
-#                     scale_x_reverse() 
+#                     scale_x_reverse()
 # }
 # plot_grid(plotlist = plot.list,ncol=2)
+  
+  
+  
+  
+  
+  
+  # building my own ridge function, using the smaller data set
+  easy.dat  = read.table("https://web.stanford.edu/~hastie/Papers/LARS/diabetes.data",header = T)
+  easy.dat = data.frame(apply(easy.dat,2,function(x){scale(x,center=T,scale=T)})) # scale and center
+  Y = easy.dat$Y # get Y
+  easy.dat = easy.dat[,-length(easy.dat)] # remove Y from X matrix
+  X = as.matrix(easy.dat, ncol=dim(easy.dat)[2])  #make it a matrix
+  
+  my.ridge = function(X,y,lambda){
+    beta.hat = solve(crossprod(X) + lambda * diag(ncol(X))) %*% crossprod(X,Y)
+    y.hat = rowSums(beta.hat * data.frame(X))
+    list(beta.hat=beta.hat,
+         y.hat=y.hat)
+  }
+  
+  results = my.ridge(X,Y,lambda = 1)
+  
+  # using the glmnet ridge function:
+  beta.hat.glmnet = glmnet(x=X,y=Y,alpha=0,lambda = 1, intercept = F)$beta
+  
+  # WHY? whats the difference ???
+  cbind(my.results=results$beta.hat,
+        glmnet=beta.hat.glmnet)
+  
+
+  
